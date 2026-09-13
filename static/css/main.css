@@ -135,12 +135,59 @@ img { max-width: 100%; }
 }
 
 /* Template colour variants */
-.template-classic   { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
-.template-modern    { background: linear-gradient(135deg, #064e3b, #10b981); }
-.template-minimal   { background: linear-gradient(135deg, #1e293b, #475569); }
-.template-creative  { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
-.template-elegant   { background: linear-gradient(135deg, #881337, #f43f5e); }
-.template-corporate { background: linear-gradient(135deg, #78350f, #f59e0b); }
+.template-classic     { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+.template-modern      { background: linear-gradient(135deg, #064e3b, #10b981); }
+.template-minimal     { background: linear-gradient(135deg, #1e293b, #475569); }
+.template-creative    { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+.template-elegant     { background: linear-gradient(135deg, #881337, #f43f5e); }
+.template-corporate   { background: linear-gradient(135deg, #78350f, #f59e0b); }
+.template-ocean       { background: linear-gradient(135deg, #0c4a6e, #0ea5e9); }
+.template-sunset      { background: linear-gradient(135deg, #c2410c, #fb923c, #f472b6); }
+.template-forest      { background: linear-gradient(135deg, #14532d, #166534); }
+.template-night       { background: linear-gradient(135deg, #0f172a, #1e3a5f); }
+.template-ruby        { background: linear-gradient(135deg, #7f1d1d, #b91c1c); }
+.template-lavender    { background: linear-gradient(135deg, #5b21b6, #a78bfa); }
+.template-steel       { background: linear-gradient(135deg, #374151, #6b7280); }
+.template-spring      { background: linear-gradient(135deg, #365314, #84cc16); }
+.template-autumn      { background: linear-gradient(135deg, #92400e, #d97706); }
+.template-arctic      { background: linear-gradient(135deg, #0369a1, #7dd3fc); }
+.template-chocolate   { background: linear-gradient(135deg, #3b1f0a, #92400e); }
+.template-neon        { background: linear-gradient(135deg, #1a0030, #ec4899); }
+.template-pastel      { background: linear-gradient(135deg, #f0abfc, #a5f3fc); }
+.template-gold        { background: linear-gradient(135deg, #0a0a0a, #b45309); }
+.template-frost       { background: linear-gradient(135deg, #334155, #94a3b8); }
+.template-tropical    { background: linear-gradient(135deg, #065f46, #06b6d4); }
+.template-mint        { background: linear-gradient(135deg, #064e3b, #6ee7b7); }
+.template-cherry      { background: linear-gradient(135deg, #831843, #ec4899); }
+.template-cosmic      { background: linear-gradient(135deg, #2e1065, #7c3aed); }
+.template-coral       { background: linear-gradient(135deg, #9a3412, #fb7185); }
+.template-graphite    { background: linear-gradient(135deg, #1c1917, #facc15); }
+.template-sapphire    { background: linear-gradient(135deg, #1e1b4b, #4338ca); }
+.template-olive       { background: linear-gradient(135deg, #365314, #4d7c0f); }
+.template-aquamarine  { background: linear-gradient(135deg, #155e75, #22d3ee); }
+.template-burgundy    { background: linear-gradient(135deg, #4c0519, #9f1239); }
+.template-sand        { background: linear-gradient(135deg, #92400e, #fcd34d); }
+.template-electric    { background: linear-gradient(135deg, #1e3a8a, #2563eb); }
+.template-peach       { background: linear-gradient(135deg, #fb923c, #fda4af); }
+.template-slate       { background: linear-gradient(135deg, #1e293b, #475569); }
+.template-indigo      { background: linear-gradient(135deg, #312e81, #6366f1); }
+.template-bronze      { background: linear-gradient(135deg, #451a03, #b45309); }
+.template-ice         { background: linear-gradient(135deg, #bfdbfe, #e0f2fe); }
+.template-honey       { background: linear-gradient(135deg, #d97706, #fde68a); }
+.template-magnolia    { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+.template-blackice    { background: linear-gradient(135deg, #020617, #1e3a5f); }
+.template-emerald     { background: linear-gradient(135deg, #064e3b, #059669); }
+.template-quartz      { background: linear-gradient(135deg, #fce7f3, #e879f9); }
+.template-charcoal    { background: linear-gradient(135deg, #18181b, #ea580c); }
+.template-wave        { background: linear-gradient(135deg, #164e63, #0d9488); }
+.template-saffron     { background: linear-gradient(135deg, #92400e, #f97316); }
+.template-marble      { background: linear-gradient(135deg, #f1f5f9, #94a3b8); }
+.template-ultraviolet { background: linear-gradient(135deg, #1e1b4b, #4c1d95); }
+.template-strawberry  { background: linear-gradient(135deg, #9f1239, #f43f5e); }
+.template-fog         { background: linear-gradient(135deg, #64748b, #bae6fd); }
+.template-brick       { background: linear-gradient(135deg, #7c2d12, #c2410c); }
+.template-jade        { background: linear-gradient(135deg, #064e3b, #047857); }
+.template-platinum    { background: linear-gradient(135deg, #334155, #cbd5e1); }
 
 /* ── Resume list cards ── */
 .resume-card {

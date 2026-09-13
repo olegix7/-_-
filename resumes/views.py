@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse, Http404
+from django.core.paginator import Paginator
 from .models import Resume, ResumeTemplate, Section, SectionEntry
 from .forms import ResumeForm, SectionForm, SectionEntryForm, SectionEntryFormSet
 
@@ -30,9 +31,71 @@ def home(request):
 
 # ── Template catalog ──────────────────────────────────────────────────────────
 
+# Групи для фільтрації — (slug, назва, список css_class)
+TEMPLATE_GROUPS = [
+    ('business',  'Бізнес та фінанси',   ['template-corporate', 'template-gold', 'template-sapphire', 'template-burgundy', 'template-emerald', 'template-platinum', 'template-bronze', 'template-slate']),
+    ('it',        'IT та технології',     ['template-modern', 'template-electric', 'template-night', 'template-blackice', 'template-neon', 'template-cosmic', 'template-ultraviolet', 'template-graphite', 'template-charcoal', 'template-indigo']),
+    ('creative',  'Творчі спеціальності', ['template-creative', 'template-elegant', 'template-coral', 'template-cherry', 'template-strawberry', 'template-quartz', 'template-lavender', 'template-saffron', 'template-sunset', 'template-wave']),
+    ('classic',   'Класичні',             ['template-classic', 'template-minimal', 'template-steel', 'template-frost', 'template-marble', 'template-fog', 'template-ice', 'template-sand', 'template-peach']),
+    ('nature',    'Природа та екологія',  ['template-forest', 'template-ocean', 'template-tropical', 'template-mint', 'template-spring', 'template-autumn', 'template-olive', 'template-jade', 'template-aquamarine']),
+    ('warm',      'Теплі тони',           ['template-ruby', 'template-chocolate', 'template-autumn', 'template-honey', 'template-peach', 'template-magnolia', 'template-brick', 'template-pastel']),
+    ('cold',      'Холодні тони',         ['template-arctic', 'template-frost', 'template-ice', 'template-fog', 'template-slate', 'template-platinum', 'template-blackice', 'template-night']),
+]
+
 def template_catalog(request):
-    templates = ResumeTemplate.objects.filter(is_active=True)
-    return render(request, 'resumes/template_catalog.html', {'templates': templates})
+    q      = request.GET.get('q', '').strip()
+    group  = request.GET.get('group', '')
+    sort   = request.GET.get('sort', 'name')   # name | newest | oldest
+
+    qs = ResumeTemplate.objects.filter(is_active=True)
+
+    # ── Пошук за назвою та описом ──────────────────────────────────────────
+    # SQLite не підтримує LOWER() для кирилиці — фільтруємо в Python
+    if q:
+        q_lower = q.lower()
+        matched_pks = [
+            t.pk for t in qs
+            if q_lower in t.name.lower() or q_lower in t.description.lower()
+        ]
+        qs = qs.filter(pk__in=matched_pks)
+
+    # ── Фільтр за групою ──────────────────────────────────────────────────
+    active_group_name = ''
+    if group:
+        css_classes = next((classes for slug, name, classes in TEMPLATE_GROUPS if slug == group), None)
+        if css_classes:
+            active_group_name = next(name for slug, name, _ in TEMPLATE_GROUPS if slug == group)
+            qs = qs.filter(css_class__in=css_classes)
+
+    # ── Сортування ───────────────────────────────────────────────────────
+    if sort == 'newest':
+        qs = qs.order_by('-created_at')
+    elif sort == 'oldest':
+        qs = qs.order_by('created_at')
+    else:
+        qs = qs.order_by('name')
+
+    total_count = qs.count()
+
+    paginator   = Paginator(qs, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj    = paginator.get_page(page_number)
+
+    # Будуємо рядок GET-параметрів без page — для посилань пагінації
+    get_params = request.GET.copy()
+    get_params.pop('page', None)
+    filter_querystring = get_params.urlencode()   # напр. q=IT&group=it&sort=name
+
+    return render(request, 'resumes/template_catalog.html', {
+        'page_obj':           page_obj,
+        'q':                  q,
+        'group':              group,
+        'sort':               sort,
+        'total_count':        total_count,
+        'groups':             TEMPLATE_GROUPS,
+        'active_group_name':  active_group_name,
+        'filter_querystring': filter_querystring,
+    })
 
 
 # ── Resume list ───────────────────────────────────────────────────────────────
