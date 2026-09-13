@@ -5,6 +5,9 @@ urlpatterns = [
     # Catalog
     path('templates/', views.template_catalog, name='template_catalog'),
 
+    # Admin
+    path('admin/', views.admin_resume_list, name='admin_resume_list'),
+
     # Resume CRUD
     path('', views.resume_list, name='resume_list'),
     path('create/', views.resume_create, name='resume_create'),

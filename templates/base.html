@@ -50,19 +50,22 @@
       </ul>
       <ul class="navbar-nav ms-auto">
         {% if user.is_authenticated %}
-          {% if user.profile.is_admin %}
+          {% with profile=user.profile %}
+          {% if profile.is_admin %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
               <i class="bi bi-shield-check me-1"></i>Адмін
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="{% url 'admin_users' %}"><i class="bi bi-people me-2"></i>Користувачі</a></li>
+              <li><a class="dropdown-item" href="{% url 'admin_resume_list' %}"><i class="bi bi-journals me-2"></i>Всі резюме</a></li>
               <li><a class="dropdown-item" href="{% url 'announcement_create' %}"><i class="bi bi-plus-circle me-2"></i>Нове оголошення</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="/admin/"><i class="bi bi-gear me-2"></i>Django Admin</a></li>
             </ul>
           </li>
           {% endif %}
+          {% endwith %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
               <i class="bi bi-person-circle me-1"></i>{{ user.first_name|default:user.username }}

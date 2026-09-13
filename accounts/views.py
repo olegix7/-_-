@@ -61,14 +61,22 @@ def profile_view(request):
             messages.error(request, 'Виправте помилки у формі.')
     else:
         form = ProfileForm(instance=profile)
-    return render(request, 'accounts/profile.html', {'form': form, 'profile': profile})
+    published_count = request.user.resumes.filter(status='published').count()
+    return render(request, 'accounts/profile.html', {
+        'form': form,
+        'profile': profile,
+        'published_count': published_count,
+    })
 
 
 @login_required
 def admin_users_view(request):
     """Admin-only view to list all users."""
-    profile, _ = Profile.objects.get_or_create(user=request.user)
-    if not profile.is_admin:
+    try:
+        is_admin = request.user.profile.is_admin
+    except Exception:
+        is_admin = request.user.is_staff
+    if not is_admin:
         messages.error(request, 'Доступ заборонено.')
         return redirect('home')
     users = User.objects.select_related('profile').all().order_by('-date_joined')
@@ -78,8 +86,11 @@ def admin_users_view(request):
 @login_required
 def admin_toggle_role(request, user_id):
     """Admin can toggle user role between user/admin."""
-    profile, _ = Profile.objects.get_or_create(user=request.user)
-    if not profile.is_admin:
+    try:
+        is_admin = request.user.profile.is_admin
+    except Exception:
+        is_admin = request.user.is_staff
+    if not is_admin:
         messages.error(request, 'Доступ заборонено.')
         return redirect('home')
     target_user = User.objects.get(pk=user_id)

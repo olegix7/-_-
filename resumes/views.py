@@ -7,6 +7,18 @@ from .models import Resume, ResumeTemplate, Section, SectionEntry
 from .forms import ResumeForm, SectionForm, SectionEntryForm, SectionEntryFormSet
 
 
+def _get_resume_for_user(pk, user):
+    """Return resume if user is owner OR admin. Raises 404 otherwise."""
+    resume = get_object_or_404(Resume, pk=pk)
+    try:
+        is_admin = user.profile.is_admin
+    except Exception:
+        is_admin = user.is_staff
+    if resume.owner == user or is_admin:
+        return resume
+    raise Http404
+
+
 # ── Home ──────────────────────────────────────────────────────────────────────
 
 def home(request):
@@ -29,6 +41,22 @@ def template_catalog(request):
 def resume_list(request):
     resumes = Resume.objects.filter(owner=request.user).select_related('template')
     return render(request, 'resumes/resume_list.html', {'resumes': resumes})
+
+
+# ── Admin: all resumes ────────────────────────────────────────────────────────
+
+@login_required
+def admin_resume_list(request):
+    """Admin view — shows all resumes from all users."""
+    try:
+        is_admin = request.user.profile.is_admin
+    except Exception:
+        is_admin = request.user.is_staff
+    if not is_admin:
+        messages.error(request, 'Доступ заборонено.')
+        return redirect('home')
+    resumes = Resume.objects.select_related('template', 'owner').order_by('-updated_at')
+    return render(request, 'resumes/admin_resume_list.html', {'resumes': resumes})
 
 
 # ── Resume create ─────────────────────────────────────────────────────────────
@@ -61,7 +89,7 @@ def resume_create(request):
 
 @login_required
 def resume_edit(request, pk):
-    resume = get_object_or_404(Resume, pk=pk, owner=request.user)
+    resume = _get_resume_for_user(pk, request.user)
     if request.method == 'POST':
         form = ResumeForm(request.POST, request.FILES, instance=resume)
         if form.is_valid():
@@ -82,7 +110,7 @@ def resume_edit(request, pk):
 
 @login_required
 def resume_detail(request, pk):
-    resume = get_object_or_404(Resume, pk=pk, owner=request.user)
+    resume = _get_resume_for_user(pk, request.user)
     sections = resume.sections.prefetch_related('entries').all()
     return render(request, 'resumes/resume_detail.html', {
         'resume': resume,
@@ -94,7 +122,7 @@ def resume_detail(request, pk):
 
 @login_required
 def resume_delete(request, pk):
-    resume = get_object_or_404(Resume, pk=pk, owner=request.user)
+    resume = _get_resume_for_user(pk, request.user)
     if request.method == 'POST':
         resume.delete()
         messages.success(request, 'Резюме видалено.')
@@ -106,7 +134,7 @@ def resume_delete(request, pk):
 
 @login_required
 def resume_clone(request, pk):
-    resume = get_object_or_404(Resume, pk=pk, owner=request.user)
+    resume = _get_resume_for_user(pk, request.user)
     new_resume = resume.clone()
     messages.success(request, f'Резюме "{resume.title}" скопійовано.')
     return redirect('resume_edit', pk=new_resume.pk)
@@ -116,7 +144,7 @@ def resume_clone(request, pk):
 
 @login_required
 def section_add(request, resume_pk):
-    resume = get_object_or_404(Resume, pk=resume_pk, owner=request.user)
+    resume = _get_resume_for_user(resume_pk, request.user)
     if request.method == 'POST':
         form = SectionForm(request.POST)
         if form.is_valid():
@@ -136,7 +164,7 @@ def section_add(request, resume_pk):
 
 @login_required
 def section_edit(request, resume_pk, section_pk):
-    resume = get_object_or_404(Resume, pk=resume_pk, owner=request.user)
+    resume = _get_resume_for_user(resume_pk, request.user)
     section = get_object_or_404(Section, pk=section_pk, resume=resume)
     if request.method == 'POST':
         form = SectionForm(request.POST, instance=section)
@@ -162,7 +190,7 @@ def section_edit(request, resume_pk, section_pk):
 
 @login_required
 def section_delete(request, resume_pk, section_pk):
-    resume = get_object_or_404(Resume, pk=resume_pk, owner=request.user)
+    resume = _get_resume_for_user(resume_pk, request.user)
     section = get_object_or_404(Section, pk=section_pk, resume=resume)
     if request.method == 'POST':
         section.delete()
@@ -177,7 +205,7 @@ def section_delete(request, resume_pk, section_pk):
 
 @login_required
 def resume_export_pdf(request, pk):
-    resume = get_object_or_404(Resume, pk=pk, owner=request.user)
+    resume = _get_resume_for_user(pk, request.user)
     sections = resume.sections.prefetch_related('entries').all()
     try:
         from reportlab.lib.pagesizes import A4
@@ -258,7 +286,7 @@ def resume_export_pdf(request, pk):
 
 @login_required
 def resume_export_docx(request, pk):
-    resume = get_object_or_404(Resume, pk=pk, owner=request.user)
+    resume = _get_resume_for_user(pk, request.user)
     sections = resume.sections.prefetch_related('entries').all()
     try:
         from docx import Document
