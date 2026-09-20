@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}{% if action == 'create' %}Нове резюме{% else %}Редагувати резюме{% endif %} — Резюме-білдер{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center gap-2 mb-4 mt-2">
+        <a href="{% url 'resume_list' %}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <h2 class="fw-bold mb-0">
+          {% if action == 'create' %}
+            <i class="bi bi-plus-circle me-2 text-primary"></i>Нове резюме
+          {% else %}
+            <i class="bi bi-pencil me-2 text-primary"></i>Редагувати резюме
+          {% endif %}
+        </h2>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <!-- Basic info -->
+            <h6 class="text-uppercase text-muted fw-semibold small mb-3 border-bottom pb-2">Загальне</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-12">
+                <label class="form-label fw-medium">{{ form.title.label }} <span class="text-danger">*</span></label>
+                {{ form.title }}
+                {% if form.title.errors %}<div class="invalid-feedback d-block">{{ form.title.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-8">
+                <label class="form-label fw-medium">{{ form.template.label }}</label>
+                {{ form.template }}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">{{ form.status.label }}</label>
+                {{ form.status }}
+              </div>
+            </div>
+
+            <!-- Personal info -->
+            <h6 class="text-uppercase text-muted fw-semibold small mb-3 border-bottom pb-2">Особиста інформація</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-medium">{{ form.full_name.label }}</label>
+                {{ form.full_name }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">{{ form.desired_position.label }}</label>
+                {{ form.desired_position }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">{{ form.email.label }}</label>
+                {{ form.email }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">{{ form.phone.label }}</label>
+                {{ form.phone }}
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-medium">{{ form.address.label }}</label>
+                {{ form.address }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">{{ form.website.label }}</label>
+                {{ form.website }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">{{ form.linkedin.label }}</label>
+                {{ form.linkedin }}
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-medium">{{ form.summary.label }}</label>
+                {{ form.summary }}
+              </div>
+            </div>
+
+            <!-- Photo -->
+            <h6 class="text-uppercase text-muted fw-semibold small mb-3 border-bottom pb-2">Фото</h6>
+            <div class="mb-4">
+              <label class="form-label fw-medium">{{ form.photo.label }}</label>
+              {{ form.photo }}
+              <div class="form-text">Рекомендований розмір: 300×300 пікселів. Формати: JPG, PNG.</div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-check-lg me-1"></i>
+                {% if action == 'create' %}Створити{% else %}Зберегти{% endif %}
+              </button>
+              <a href="{% url 'resume_list' %}" class="btn btn-outline-secondary">Скасувати</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
