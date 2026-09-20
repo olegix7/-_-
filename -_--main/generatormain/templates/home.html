@@ -1,0 +1,396 @@
+﻿{% extends 'base.html' %}
+{% block title %}Головна — Резюме-білдер{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-section text-white py-5">
+  <div class="container py-4">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-3">Створіть резюме мрії</h1>
+        <p class="lead mb-4 opacity-90">
+          Обирайте з красивих шаблонів, заповнюйте свої дані та завантажуйте готове резюме у форматі PDF або DOCX — за лічені хвилини.
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+          {% if user.is_authenticated %}
+            <a href="{% url 'resume_create' %}" class="btn btn-light btn-lg px-4 fw-semibold">
+              <i class="bi bi-plus-circle me-2"></i>Створити резюме
+            </a>
+            <a href="{% url 'resume_list' %}" class="btn btn-outline-light btn-lg px-4">
+              <i class="bi bi-journals me-2"></i>Мої резюме
+            </a>
+          {% else %}
+            <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 fw-semibold">
+              <i class="bi bi-person-plus me-2"></i>Почати безкоштовно
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Увійти
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-lg-6 mt-5 mt-lg-0 text-center">
+        <div class="hero-illustration">
+          <!-- SVG смайлик -->
+          <svg id="face-svg" width="220" height="220" viewBox="0 0 100 100"
+               style="cursor:pointer; transition: transform 0.25s; filter: drop-shadow(0 0 30px rgba(255,220,0,0.7)) drop-shadow(0 8px 24px rgba(0,0,0,0.35));"
+               title="Натисни на мене!">
+            <circle cx="50" cy="50" r="48" fill="rgba(255,220,0,0.18)"/>
+            <circle id="face-bg" cx="50" cy="50" r="44" fill="#FFD93D" stroke="#F4A100" stroke-width="3.5"/>
+            <ellipse cx="35" cy="28" rx="10" ry="6" fill="rgba(255,255,255,0.28)" transform="rotate(-20,35,28)"/>
+            <path id="brow-left"  d="M 28 28 Q 35 23 42 27" stroke="#5C3A00" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path id="brow-right" d="M 58 27 Q 65 23 72 28" stroke="#5C3A00" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse id="eye-left"  cx="35" cy="38" rx="6" ry="7" fill="#2C1A00"/>
+            <ellipse id="eye-right" cx="65" cy="38" rx="6" ry="7" fill="#2C1A00"/>
+            <ellipse cx="32" cy="35" rx="2" ry="2.5" fill="white"/>
+            <ellipse cx="62" cy="35" rx="2" ry="2.5" fill="white"/>
+            <path id="mouth" d="M 28 62 Q 50 84 72 62" stroke="#2C1A00" stroke-width="4.5" fill="rgba(180,80,80,0.3)" stroke-linecap="round"/>
+            <path id="teeth" d="M 35 65 Q 50 74 65 65 Q 50 70 35 65 Z" fill="white" opacity="0.85"/>
+            <ellipse cx="20" cy="65" rx="11" ry="7" fill="#FF6B9D" opacity="0.45"/>
+            <ellipse cx="80" cy="65" rx="11" ry="7" fill="#FF6B9D" opacity="0.45"/>
+          </svg>
+          <div id="face-label" style="margin-top:12px; font-size:1rem; font-weight:600; color:rgba(255,255,220,0.9); text-shadow: 0 1px 6px rgba(0,0,0,0.4);">&#9834; Наведи або натисни!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var svg   = document.getElementById('face-svg');
+  var faceBg= document.getElementById('face-bg');
+  var mouth = document.getElementById('mouth');
+  var teeth = document.getElementById('teeth');
+  var browL = document.getElementById('brow-left');
+  var browR = document.getElementById('brow-right');
+  var eyeL  = document.getElementById('eye-left');
+  var eyeR  = document.getElementById('eye-right');
+  var label = document.getElementById('face-label');
+  var happy = true;
+  var pulseInterval = null;
+  var musicPlaying = false;
+
+  // Ініціалізуємо AudioContext одразу — щоб не було затримки
+  var ctx = new (window.AudioContext || window.webkitAudioContext)();
+  var masterGain = ctx.createGain();
+  var compressor = ctx.createDynamicsCompressor();
+  compressor.threshold.value = -24;
+  compressor.ratio.value = 4;
+  masterGain.gain.value = 0.18;
+  masterGain.connect(compressor);
+  compressor.connect(ctx.destination);
+
+  // Нова весела мелодія (BPM ~160, в стилі GD)
+  // Формат: [нота_Гц, доля (1=чверть при BPM160)]
+  var BPM = 160;
+  var BEAT = 60 / BPM; // секунд на чверть
+  var song = [
+    // Фраза 1
+    [1047,1],[880,0.5],[988,0.5],[1047,1],[880,1],
+    [784,0.5],[880,0.5],[988,1],[784,1],
+    // Фраза 2
+    [659,0.5],[784,0.5],[880,1],[988,0.5],[1047,0.5],[1175,1],
+    [1047,0.5],[988,0.5],[880,1],[784,2],
+    // Фраза 3 (підйом)
+    [523,0.5],[587,0.5],[659,0.5],[784,0.5],[880,0.5],[988,0.5],[1047,0.5],[1175,0.5],
+    [1319,2],
+    // Фраза 4 (спуск з акцентами)
+    [1175,0.5],[1047,0.5],[988,1],[880,0.5],[784,0.5],[659,1],[587,0.5],[523,0.5],
+    [494,0.5],[523,0.5],[587,1],[659,2]
+  ];
+
+  var loopTimer = null;
+
+  function scheduleNote(freq, startTime, dur) {
+    // Основна нота — пила (яскравий GD-звук)
+    var osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.value = freq;
+
+    // Фільтр — зрізає верхні частоти, звук м'якший
+    var filt = ctx.createBiquadFilter();
+    filt.type = 'lowpass';
+    filt.frequency.value = 2200;
+    filt.Q.value = 1.2;
+
+    var g = ctx.createGain();
+    g.gain.setValueAtTime(0.001, startTime);
+    g.gain.linearRampToValueAtTime(0.85, startTime + 0.008); // атака миттєва
+    g.gain.setValueAtTime(0.75, startTime + dur * 0.6);
+    g.gain.exponentialRampToValueAtTime(0.001, startTime + dur * 0.98);
+
+    osc.connect(filt); filt.connect(g); g.connect(masterGain);
+    osc.start(startTime);
+    osc.stop(startTime + dur);
+
+    // Квадратна субнота (октава нижче) — дає глибину
+    var sub = ctx.createOscillator();
+    sub.type = 'square';
+    sub.frequency.value = freq / 2;
+    var sg = ctx.createGain();
+    sg.gain.setValueAtTime(0.001, startTime);
+    sg.gain.linearRampToValueAtTime(0.3, startTime + 0.008);
+    sg.gain.exponentialRampToValueAtTime(0.001, startTime + dur * 0.9);
+    sub.connect(sg); sg.connect(masterGain);
+    sub.start(startTime);
+    sub.stop(startTime + dur);
+  }
+
+  function playMelody() {
+    if (!musicPlaying) return;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    var now = ctx.currentTime + 0.005; // майже нульова затримка
+    var t = 0;
+    var totalDur = 0;
+    song.forEach(function(n){ totalDur += n[1] * BEAT; });
+
+    song.forEach(function(note) {
+      var freq = note[0], beats = note[1];
+      var dur = beats * BEAT;
+      scheduleNote(freq, now + t, dur * 0.92);
+      t += dur;
+    });
+
+    // Запускаємо наступну петлю точно в момент закінчення
+    loopTimer = setTimeout(function() {
+      if (musicPlaying) playMelody();
+    }, totalDur * 1000);
+  }
+
+  function startMusic() {
+    if (musicPlaying) return;
+    musicPlaying = true;
+    if (ctx.state === 'suspended') ctx.resume();
+    masterGain.gain.cancelScheduledValues(ctx.currentTime);
+    masterGain.gain.setValueAtTime(0.18, ctx.currentTime);
+    playMelody();
+  }
+
+  function stopMusic() {
+    musicPlaying = false;
+    clearTimeout(loopTimer);
+    // Миттєво заглушити — без будь-якої затримки
+    masterGain.gain.cancelScheduledValues(ctx.currentTime);
+    masterGain.gain.setValueAtTime(0, ctx.currentTime);
+  }
+
+  function startPulse() {
+    stopPulse();
+    var big = false;
+    pulseInterval = setInterval(function() {
+      big = !big;
+      svg.style.transform = big ? 'scale(1.09)' : 'scale(1.0)';
+    }, Math.round(BEAT * 1000)); // пульс в ритм BPM
+  }
+
+  function stopPulse() {
+    clearInterval(pulseInterval);
+    svg.style.transform = 'scale(1)';
+  }
+
+  function setHappy() {
+    faceBg.setAttribute('fill', '#FFD93D');
+    faceBg.setAttribute('stroke', '#F4A100');
+    mouth.setAttribute('d', 'M 28 62 Q 50 84 72 62');
+    mouth.setAttribute('fill', 'rgba(180,80,80,0.3)');
+    teeth.setAttribute('opacity', '0.85');
+    browL.setAttribute('d', 'M 28 28 Q 35 23 42 27');
+    browR.setAttribute('d', 'M 58 27 Q 65 23 72 28');
+    eyeL.setAttribute('ry', '7');
+    eyeR.setAttribute('ry', '7');
+    label.innerHTML = '&#9834; Наведи або натисни!';
+    label.style.color = 'rgba(255,255,220,0.9)';
+  }
+
+  function setSad() {
+    faceBg.setAttribute('fill', '#90A4AE');
+    faceBg.setAttribute('stroke', '#607D8B');
+    mouth.setAttribute('d', 'M 30 75 Q 50 60 70 75');
+    mouth.setAttribute('fill', 'none');
+    teeth.setAttribute('opacity', '0');
+    browL.setAttribute('d', 'M 28 32 Q 35 37 42 33');
+    browR.setAttribute('d', 'M 58 33 Q 65 37 72 32');
+    eyeL.setAttribute('ry', '3');
+    eyeR.setAttribute('ry', '3');
+    label.innerHTML = '&#128546; Натисни щоб веселішати';
+    label.style.color = 'rgba(200,220,230,0.8)';
+  }
+
+  svg.addEventListener('click', function() {
+    happy = !happy;
+    if (happy) {
+      setHappy();
+      svg.style.transform = 'scale(1.25)';
+      setTimeout(function(){ svg.style.transform = 'scale(1)'; }, 250);
+      startMusic();
+      startPulse();
+    } else {
+      setSad();
+      stopPulse();
+      stopMusic();
+      svg.style.transform = 'scale(0.82)';
+      setTimeout(function(){ svg.style.transform = 'scale(1)'; }, 250);
+    }
+  });
+
+  svg.addEventListener('mouseenter', function() {
+    if (happy) { startMusic(); startPulse(); }
+  });
+
+  svg.addEventListener('mouseleave', function() {
+    if (happy) { stopPulse(); stopMusic(); }
+  });
+
+  setHappy();
+})();
+</script>
+
+<!-- Features -->
+<section class="py-5 bg-white">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5">Чому обирають нас?</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+          <h5 class="fw-bold">Готові шаблони</h5>
+          <p class="text-muted">Обирайте з каталогу красивих шаблонів та застосовуйте до свого резюме одним кліком.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-pencil-square"></i></div>
+          <h5 class="fw-bold">Зручний редактор</h5>
+          <p class="text-muted">Додавайте секції: досвід роботи, освіту, навички, мови, проекти. Зберігайте чернетки.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-download"></i></div>
+          <h5 class="fw-bold">Експорт PDF та DOCX</h5>
+          <p class="text-muted">Завантажуйте готове резюме у форматі PDF або Word у будь-який момент.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-copy"></i></div>
+          <h5 class="fw-bold">Клонування резюме</h5>
+          <p class="text-muted">Копіюйте існуюче резюме як основу для нової версії під конкретну вакансію.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-image"></i></div>
+          <h5 class="fw-bold">Фото у резюме</h5>
+          <p class="text-muted">Завантажуйте своє фото безпосередньо у резюме для більш персонального вигляду.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-shield-lock"></i></div>
+          <h5 class="fw-bold">Безпечно та надійно</h5>
+          <p class="text-muted">Ваші дані захищені. Доступ до резюме тільки у вас. Стандарти безпеки Django.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Templates preview -->
+{% if templates %}
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold mb-0">Популярні шаблони</h2>
+      <a href="{% url 'template_catalog' %}" class="btn btn-outline-primary">
+        Всі шаблони <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-4">
+      {% for tmpl in templates %}
+      <div class="col-md-4">
+        <div class="card template-card h-100 border-0 shadow-sm">
+          {% if tmpl.preview_image %}
+            <img src="{{ tmpl.preview_image.url }}" class="card-img-top template-preview-img" alt="{{ tmpl.name }}">
+          {% else %}
+            <div class="template-placeholder {{ tmpl.css_class }}">
+              <i class="bi bi-file-earmark-text"></i>
+            </div>
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">{{ tmpl.name }}</h5>
+            <p class="card-text text-muted small">{{ tmpl.description|truncatechars:80 }}</p>
+          </div>
+          <div class="card-footer bg-transparent border-0 pb-3">
+            {% if user.is_authenticated %}
+              <a href="{% url 'resume_create' %}?template={{ tmpl.pk }}" class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-plus-circle me-1"></i>Використати шаблон
+              </a>
+            {% else %}
+              <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm w-100">
+                <i class="bi bi-person-plus me-1"></i>Зареєструватись
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- News -->
+{% if news %}
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold mb-0">Останні новини</h2>
+      <a href="{% url 'announcement_list' %}" class="btn btn-outline-primary">
+        Всі новини <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-4">
+      {% for item in news %}
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" class="card-img-top" style="height:180px;object-fit:cover;" alt="">
+          {% endif %}
+          <div class="card-body">
+            <span class="badge {% if item.announcement_type == 'news' %}bg-info{% else %}bg-warning text-dark{% endif %} mb-2">
+              {{ item.get_announcement_type_display }}
+            </span>
+            <h5 class="card-title fw-semibold">{{ item.title }}</h5>
+            <p class="card-text text-muted small">{{ item.content|truncatechars:100 }}</p>
+          </div>
+          <div class="card-footer bg-transparent border-0 pb-3">
+            <a href="{% url 'announcement_detail' item.pk %}" class="btn btn-outline-primary btn-sm">
+              Читати далі <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+            <small class="text-muted ms-2">{{ item.created_at|date:"d.m.Y" }}</small>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- CTA -->
+{% if not user.is_authenticated %}
+<section class="py-5 bg-primary text-white text-center">
+  <div class="container py-3">
+    <h2 class="fw-bold mb-3">Готові почати?</h2>
+    <p class="lead mb-4 opacity-90">Зареєструйтесь безкоштовно та створіть своє перше резюме вже сьогодні.</p>
+    <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5 fw-semibold">
+      <i class="bi bi-person-plus me-2"></i>Зареєструватись
+    </a>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
