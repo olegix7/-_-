@@ -1,0 +1,394 @@
+/* ============================================================
+   Резюме-білдер — Main Stylesheet
+   ============================================================ */
+
+/* ── Variables ── */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #dbeafe;
+  --secondary: #475569;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #d97706;
+  --bg-light: #f8fafc;
+  --bg-white: #ffffff;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font);
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main { flex: 1; }
+
+a { color: var(--primary); }
+a:hover { color: var(--primary-dark); }
+
+img { max-width: 100%; }
+
+/* ── Navbar ── */
+.navbar {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important;
+}
+
+.navbar-brand {
+  font-size: 1.3rem !important;
+  letter-spacing: -.3px;
+}
+
+.navbar .nav-link {
+  font-size: .9rem;
+  font-weight: 500;
+  padding: .4rem .75rem;
+  border-radius: var(--radius-sm);
+  transition: background .15s;
+}
+
+.navbar .nav-link:hover { background: rgba(255,255,255,.12); }
+
+/* ── Hero ── */
+.hero-section {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.hero-illustration { opacity: .15; }
+
+/* ── Feature cards ── */
+.feature-card {
+  border-radius: var(--radius);
+  background: var(--bg-white);
+  box-shadow: var(--shadow-sm);
+  transition: transform .2s, box-shadow .2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.feature-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 1.75rem;
+  color: var(--primary);
+}
+
+/* ── Template cards ── */
+.template-card {
+  border-radius: var(--radius);
+  transition: transform .2s, box-shadow .2s;
+  overflow: hidden;
+}
+
+.template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.template-preview-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.template-placeholder {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  color: rgba(255,255,255,.7);
+}
+
+/* Template colour variants */
+.template-classic     { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+.template-modern      { background: linear-gradient(135deg, #064e3b, #10b981); }
+.template-minimal     { background: linear-gradient(135deg, #1e293b, #475569); }
+.template-creative    { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+.template-elegant     { background: linear-gradient(135deg, #881337, #f43f5e); }
+.template-corporate   { background: linear-gradient(135deg, #78350f, #f59e0b); }
+.template-ocean       { background: linear-gradient(135deg, #0c4a6e, #0ea5e9); }
+.template-sunset      { background: linear-gradient(135deg, #c2410c, #fb923c, #f472b6); }
+.template-forest      { background: linear-gradient(135deg, #14532d, #166534); }
+.template-night       { background: linear-gradient(135deg, #0f172a, #1e3a5f); }
+.template-ruby        { background: linear-gradient(135deg, #7f1d1d, #b91c1c); }
+.template-lavender    { background: linear-gradient(135deg, #5b21b6, #a78bfa); }
+.template-steel       { background: linear-gradient(135deg, #374151, #6b7280); }
+.template-spring      { background: linear-gradient(135deg, #365314, #84cc16); }
+.template-autumn      { background: linear-gradient(135deg, #92400e, #d97706); }
+.template-arctic      { background: linear-gradient(135deg, #0369a1, #7dd3fc); }
+.template-chocolate   { background: linear-gradient(135deg, #3b1f0a, #92400e); }
+.template-neon        { background: linear-gradient(135deg, #1a0030, #ec4899); }
+.template-pastel      { background: linear-gradient(135deg, #f0abfc, #a5f3fc); }
+.template-gold        { background: linear-gradient(135deg, #0a0a0a, #b45309); }
+.template-frost       { background: linear-gradient(135deg, #334155, #94a3b8); }
+.template-tropical    { background: linear-gradient(135deg, #065f46, #06b6d4); }
+.template-mint        { background: linear-gradient(135deg, #064e3b, #6ee7b7); }
+.template-cherry      { background: linear-gradient(135deg, #831843, #ec4899); }
+.template-cosmic      { background: linear-gradient(135deg, #2e1065, #7c3aed); }
+.template-coral       { background: linear-gradient(135deg, #9a3412, #fb7185); }
+.template-graphite    { background: linear-gradient(135deg, #1c1917, #facc15); }
+.template-sapphire    { background: linear-gradient(135deg, #1e1b4b, #4338ca); }
+.template-olive       { background: linear-gradient(135deg, #365314, #4d7c0f); }
+.template-aquamarine  { background: linear-gradient(135deg, #155e75, #22d3ee); }
+.template-burgundy    { background: linear-gradient(135deg, #4c0519, #9f1239); }
+.template-sand        { background: linear-gradient(135deg, #92400e, #fcd34d); }
+.template-electric    { background: linear-gradient(135deg, #1e3a8a, #2563eb); }
+.template-peach       { background: linear-gradient(135deg, #fb923c, #fda4af); }
+.template-slate       { background: linear-gradient(135deg, #1e293b, #475569); }
+.template-indigo      { background: linear-gradient(135deg, #312e81, #6366f1); }
+.template-bronze      { background: linear-gradient(135deg, #451a03, #b45309); }
+.template-ice         { background: linear-gradient(135deg, #bfdbfe, #e0f2fe); }
+.template-honey       { background: linear-gradient(135deg, #d97706, #fde68a); }
+.template-magnolia    { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+.template-blackice    { background: linear-gradient(135deg, #020617, #1e3a5f); }
+.template-emerald     { background: linear-gradient(135deg, #064e3b, #059669); }
+.template-quartz      { background: linear-gradient(135deg, #fce7f3, #e879f9); }
+.template-charcoal    { background: linear-gradient(135deg, #18181b, #ea580c); }
+.template-wave        { background: linear-gradient(135deg, #164e63, #0d9488); }
+.template-saffron     { background: linear-gradient(135deg, #92400e, #f97316); }
+.template-marble      { background: linear-gradient(135deg, #f1f5f9, #94a3b8); }
+.template-ultraviolet { background: linear-gradient(135deg, #1e1b4b, #4c1d95); }
+.template-strawberry  { background: linear-gradient(135deg, #9f1239, #f43f5e); }
+.template-fog         { background: linear-gradient(135deg, #64748b, #bae6fd); }
+.template-brick       { background: linear-gradient(135deg, #7c2d12, #c2410c); }
+.template-jade        { background: linear-gradient(135deg, #064e3b, #047857); }
+.template-platinum    { background: linear-gradient(135deg, #334155, #cbd5e1); }
+
+/* ── Resume list cards ── */
+.resume-card {
+  border-radius: var(--radius);
+  transition: transform .2s, box-shadow .2s;
+}
+
+.resume-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow) !important;
+}
+
+/* ── Resume preview (detail page) ── */
+.resume-preview {
+  border-radius: var(--radius);
+  background: #fff;
+  font-family: var(--font);
+}
+
+.resume-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: .25rem;
+}
+
+.resume-position {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.resume-photo {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border: 3px solid var(--primary-light);
+}
+
+.resume-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary-light);
+  padding-bottom: .4rem;
+  margin-bottom: 1rem;
+}
+
+.resume-entry-title {
+  font-weight: 600;
+  font-size: .95rem;
+}
+
+.resume-entry-desc {
+  font-size: .9rem;
+  color: var(--secondary);
+}
+
+/* Template-specific preview tweaks */
+.template-modern  .resume-section-title { color: #059669; border-color: #d1fae5; }
+.template-minimal .resume-section-title { color: var(--text-dark); border-color: var(--border); }
+.template-creative .resume-section-title { color: #7c3aed; border-color: #ede9fe; }
+.template-elegant  .resume-section-title { color: #be185d; border-color: #fce7f3; }
+.template-corporate .resume-section-title { color: #92400e; border-color: #fef3c7; }
+
+/* ── Announcement cards ── */
+.announcement-card {
+  border-radius: var(--radius);
+  transition: transform .2s, box-shadow .2s;
+}
+
+.announcement-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow) !important;
+}
+
+.announcement-content {
+  font-size: .95rem;
+  line-height: 1.75;
+  color: var(--text-dark);
+}
+
+/* ── Section preview (resume edit page) ── */
+.section-preview:last-child { border-bottom: none !important; }
+
+/* ── Cards general ── */
+.card {
+  border-radius: var(--radius);
+}
+
+.card-header {
+  border-radius: var(--radius) var(--radius) 0 0 !important;
+}
+
+/* ── Forms ── */
+.form-control, .form-select {
+  border-radius: var(--radius-sm);
+  border-color: var(--border);
+  font-size: .9rem;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+
+.form-label { font-size: .875rem; }
+
+/* ── Buttons ── */
+.btn {
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: .875rem;
+  transition: all .15s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37,99,235,.35);
+}
+
+.btn-xs {
+  padding: .15rem .35rem;
+  font-size: .75rem;
+  border-radius: .35rem;
+}
+
+/* ── Stat box ── */
+.stat-box {
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+}
+
+/* ── Avatar ── */
+.avatar-placeholder {
+  font-weight: 600;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* ── Badges ── */
+.badge { font-weight: 500; }
+
+/* ── Alerts ── */
+.alert {
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: .9rem;
+}
+
+.alert-success  { background: #dcfce7; color: #166534; }
+.alert-error,
+.alert-danger   { background: #fee2e2; color: #991b1b; }
+.alert-warning  { background: #fef9c3; color: #854d0e; }
+.alert-info     { background: #dbeafe; color: #1e40af; }
+
+/* ── Footer ── */
+.footer { margin-top: auto; }
+
+/* ── Utilities ── */
+.opacity-90 { opacity: .9; }
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .resume-name { font-size: 1.5rem; }
+  .hero-section .display-4 { font-size: 2rem; }
+  .template-placeholder { height: 150px; font-size: 3rem; }
+}
+
+@media (max-width: 576px) {
+  .card-body { padding: 1.25rem !important; }
+  .resume-photo { width: 64px; height: 64px; }
+}
+
+/* ── Print styles (for resume preview) ── */
+@media print {
+  .navbar, .footer, .btn, .alert { display: none !important; }
+  .resume-preview {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  body { background: white; }
+}

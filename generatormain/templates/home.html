@@ -1,0 +1,186 @@
+﻿{% extends 'base.html' %}
+{% block title %}Головна — Резюме-білдер{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-section text-white py-5">
+  <div class="container py-4">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-3">Створіть резюме мрії</h1>
+        <p class="lead mb-4 opacity-90">
+          Обирайте з красивих шаблонів, заповнюйте свої дані та завантажуйте готове резюме у форматі PDF або DOCX — за лічені хвилини.
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+          {% if user.is_authenticated %}
+            <a href="{% url 'resume_create' %}" class="btn btn-light btn-lg px-4 fw-semibold">
+              <i class="bi bi-plus-circle me-2"></i>Створити резюме
+            </a>
+            <a href="{% url 'resume_list' %}" class="btn btn-outline-light btn-lg px-4">
+              <i class="bi bi-journals me-2"></i>Мої резюме
+            </a>
+          {% else %}
+            <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 fw-semibold">
+              <i class="bi bi-person-plus me-2"></i>Почати безкоштовно
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Увійти
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-6 mt-5 mt-lg-0 text-center">
+        <div class="hero-illustration">
+          <i class="bi bi-file-earmark-person" style="font-size: 10rem; opacity: 0.25;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="py-5 bg-white">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5">Чому обирають нас?</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+          <h5 class="fw-bold">Готові шаблони</h5>
+          <p class="text-muted">Обирайте з каталогу красивих шаблонів та застосовуйте до свого резюме одним кліком.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-pencil-square"></i></div>
+          <h5 class="fw-bold">Зручний редактор</h5>
+          <p class="text-muted">Додавайте секції: досвід роботи, освіту, навички, мови, проекти. Зберігайте чернетки.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-download"></i></div>
+          <h5 class="fw-bold">Експорт PDF та DOCX</h5>
+          <p class="text-muted">Завантажуйте готове резюме у форматі PDF або Word у будь-який момент.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-copy"></i></div>
+          <h5 class="fw-bold">Клонування резюме</h5>
+          <p class="text-muted">Копіюйте існуюче резюме як основу для нової версії під конкретну вакансію.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-image"></i></div>
+          <h5 class="fw-bold">Фото у резюме</h5>
+          <p class="text-muted">Завантажуйте своє фото безпосередньо у резюме для більш персонального вигляду.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3"><i class="bi bi-shield-lock"></i></div>
+          <h5 class="fw-bold">Безпечно та надійно</h5>
+          <p class="text-muted">Ваші дані захищені. Доступ до резюме тільки у вас. Стандарти безпеки Django.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Templates preview -->
+{% if templates %}
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold mb-0">Популярні шаблони</h2>
+      <a href="{% url 'template_catalog' %}" class="btn btn-outline-primary">
+        Всі шаблони <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-4">
+      {% for tmpl in templates %}
+      <div class="col-md-4">
+        <div class="card template-card h-100 border-0 shadow-sm">
+          {% if tmpl.preview_image %}
+            <img src="{{ tmpl.preview_image.url }}" class="card-img-top template-preview-img" alt="{{ tmpl.name }}">
+          {% else %}
+            <div class="template-placeholder {{ tmpl.css_class }}">
+              <i class="bi bi-file-earmark-text"></i>
+            </div>
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">{{ tmpl.name }}</h5>
+            <p class="card-text text-muted small">{{ tmpl.description|truncatechars:80 }}</p>
+          </div>
+          <div class="card-footer bg-transparent border-0 pb-3">
+            {% if user.is_authenticated %}
+              <a href="{% url 'resume_create' %}?template={{ tmpl.pk }}" class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-plus-circle me-1"></i>Використати шаблон
+              </a>
+            {% else %}
+              <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm w-100">
+                <i class="bi bi-person-plus me-1"></i>Зареєструватись
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- News -->
+{% if news %}
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold mb-0">Останні новини</h2>
+      <a href="{% url 'announcement_list' %}" class="btn btn-outline-primary">
+        Всі новини <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-4">
+      {% for item in news %}
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" class="card-img-top" style="height:180px;object-fit:cover;" alt="">
+          {% endif %}
+          <div class="card-body">
+            <span class="badge {% if item.announcement_type == 'news' %}bg-info{% else %}bg-warning text-dark{% endif %} mb-2">
+              {{ item.get_announcement_type_display }}
+            </span>
+            <h5 class="card-title fw-semibold">{{ item.title }}</h5>
+            <p class="card-text text-muted small">{{ item.content|truncatechars:100 }}</p>
+          </div>
+          <div class="card-footer bg-transparent border-0 pb-3">
+            <a href="{% url 'announcement_detail' item.pk %}" class="btn btn-outline-primary btn-sm">
+              Читати далі <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+            <small class="text-muted ms-2">{{ item.created_at|date:"d.m.Y" }}</small>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- CTA -->
+{% if not user.is_authenticated %}
+<section class="py-5 bg-primary text-white text-center">
+  <div class="container py-3">
+    <h2 class="fw-bold mb-3">Готові почати?</h2>
+    <p class="lead mb-4 opacity-90">Зареєструйтесь безкоштовно та створіть своє перше резюме вже сьогодні.</p>
+    <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5 fw-semibold">
+      <i class="bi bi-person-plus me-2"></i>Зареєструватись
+    </a>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

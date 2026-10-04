@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Управління користувачами{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="d-flex align-items-center justify-content-between mb-4 mt-2">
+    <h2 class="fw-bold mb-0"><i class="bi bi-people me-2 text-primary"></i>Користувачі</h2>
+    <span class="badge bg-secondary fs-6">{{ users.count }}</span>
+  </div>
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Користувач</th>
+            <th>Email</th>
+            <th>Роль</th>
+            <th>Резюме</th>
+            <th>Дата реєстрації</th>
+            <th>Дія</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td class="text-muted small">{{ u.pk }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                     style="width:32px;height:32px;font-size:.85rem;">
+                  {{ u.first_name|first|upper|default:u.username|first|upper }}
+                </div>
+                <div>
+                  <div class="fw-medium">{{ u.get_full_name|default:u.username }}</div>
+                  <small class="text-muted">@{{ u.username }}</small>
+                </div>
+              </div>
+            </td>
+            <td><small>{{ u.email }}</small></td>
+            <td>
+              {% with role=u.profile.role %}
+                {% if role == 'admin' or u.is_staff %}
+                  <span class="badge bg-danger">Адміністратор</span>
+                {% else %}
+                  <span class="badge bg-primary">Користувач</span>
+                {% endif %}
+              {% endwith %}
+            </td>
+            <td>{{ u.resumes.count }}</td>
+            <td><small class="text-muted">{{ u.date_joined|date:"d.m.Y" }}</small></td>
+            <td>
+              {% if u != request.user %}
+              <form method="post" action="{% url 'admin_toggle_role' u.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-secondary"
+                        onclick="return confirm('Змінити роль користувача {{ u.username }}?')">
+                  <i class="bi bi-arrow-left-right me-1"></i>Змінити роль
+                </button>
+              </form>
+              {% else %}
+                <span class="text-muted small">Ви</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">Користувачів не знайдено</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
