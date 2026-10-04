@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}{% if action == 'add' %}Нова секція{% else %}Редагувати секцію{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center gap-2 mb-4 mt-2">
+        <a href="{% url 'resume_edit' resume.pk %}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <h3 class="fw-bold mb-0">
+          {% if action == 'add' %}
+            <i class="bi bi-plus-circle me-2 text-primary"></i>Нова секція
+          {% else %}
+            <i class="bi bi-pencil me-2 text-primary"></i>Редагувати секцію
+          {% endif %}
+        </h3>
+        <span class="text-muted small">— {{ resume.title }}</span>
+      </div>
+
+      <!-- Section info -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom py-3">
+          <h6 class="fw-semibold mb-0">Параметри секції</h6>
+        </div>
+        <div class="card-body p-4">
+          <form method="post" {% if action == 'edit' %}id="section-form"{% endif %} novalidate>
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-5">
+                <label class="form-label fw-medium">{{ form.section_type.label }}</label>
+                {{ form.section_type }}
+              </div>
+              <div class="col-md-5">
+                <label class="form-label fw-medium">{{ form.title.label }}</label>
+                {{ form.title }}
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-medium">{{ form.order.label }}</label>
+                {{ form.order }}
+              </div>
+            </div>
+
+            {% if action == 'edit' and formset %}
+            <!-- Entries formset -->
+            <hr class="my-4">
+            <h6 class="fw-semibold mb-3">Записи секції</h6>
+            {{ formset.management_form }}
+            <div id="formset-container">
+              {% for entry_form in formset %}
+              <div class="entry-form card bg-light border-0 mb-3 p-3">
+                {{ entry_form.id }}
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label fw-medium small">{{ entry_form.subtitle.label }}</label>
+                    {{ entry_form.subtitle }}
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label fw-medium small">{{ entry_form.date_start.label }}</label>
+                    {{ entry_form.date_start }}
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label fw-medium small">{{ entry_form.date_end.label }}</label>
+                    {{ entry_form.date_end }}
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label fw-medium small">{{ entry_form.location.label }}</label>
+                    {{ entry_form.location }}
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label fw-medium small">{{ entry_form.order.label }}</label>
+                    {{ entry_form.order }}
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-medium small">{{ entry_form.description.label }}</label>
+                    {{ entry_form.description }}
+                  </div>
+                  {% if entry_form.instance.pk %}
+                  <div class="col-12 d-flex align-items-center gap-2">
+                    <div class="form-check">
+                      {{ entry_form.DELETE }}
+                      <label class="form-check-label text-danger small" for="{{ entry_form.DELETE.id_for_label }}">
+                        Видалити цей запис
+                      </label>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-check-lg me-1"></i>Зберегти
+              </button>
+              <a href="{% url 'resume_edit' resume.pk %}" class="btn btn-outline-secondary">Скасувати</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}{{ announcement.title }} — Резюме-білдер{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center gap-2 mb-4 mt-2">
+        <a href="{% url 'announcement_list' %}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'announcement_list' %}">Новини</a></li>
+            <li class="breadcrumb-item active">{{ announcement.title|truncatechars:40 }}</li>
+          </ol>
+        </nav>
+      </div>
+
+      <article class="card border-0 shadow-sm">
+        {% if announcement.image %}
+          <img src="{{ announcement.image.url }}" class="card-img-top" style="max-height:350px;object-fit:cover;" alt="">
+        {% endif %}
+        <div class="card-body p-4 p-md-5">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge {% if announcement.announcement_type == 'news' %}bg-info{% else %}bg-warning text-dark{% endif %} fs-6">
+              {{ announcement.get_announcement_type_display }}
+            </span>
+          </div>
+          <h1 class="fw-bold mb-3">{{ announcement.title }}</h1>
+          <div class="text-muted small mb-4 d-flex gap-3">
+            {% if announcement.author %}
+              <span><i class="bi bi-person me-1"></i>{{ announcement.author.get_full_name|default:announcement.author.username }}</span>
+            {% endif %}
+            <span><i class="bi bi-calendar me-1"></i>{{ announcement.created_at|date:"d.m.Y H:i" }}</span>
+            {% if announcement.updated_at != announcement.created_at %}
+              <span><i class="bi bi-pencil me-1"></i>Оновлено: {{ announcement.updated_at|date:"d.m.Y" }}</span>
+            {% endif %}
+          </div>
+          <div class="announcement-content">
+            {{ announcement.content|linebreaksbr }}
+          </div>
+        </div>
+        {% if user.is_authenticated and user.profile.is_admin %}
+        <div class="card-footer bg-transparent border-top py-3 d-flex gap-2">
+          <a href="{% url 'announcement_edit' announcement.pk %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-pencil me-1"></i>Редагувати
+          </a>
+          <a href="{% url 'announcement_delete' announcement.pk %}" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-trash me-1"></i>Видалити
+          </a>
+        </div>
+        {% endif %}
+      </article>
+    </div>
+  </div>
+</div>
+{% endblock %}
